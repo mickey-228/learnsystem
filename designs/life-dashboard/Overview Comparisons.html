@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>小生活 · 总览页视觉方向</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; background: #f0eee9; }
+    body {
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    button { font: inherit; }
+
+    /* ── 共享布局 ─────────────────────────────────────────── */
+    .screen {
+      --mono: "SFMono-Regular", "Cascadia Code", Consolas, monospace;
+      --display: "Iowan Old Style", Georgia, "Songti SC", "STSong", "SimSun", "Noto Serif SC", serif;
+      --body: -apple-system, "SF Pro Text", "Avenir Next", "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      width: 1120px;
+      height: 840px;
+      display: flex;
+      overflow: hidden;
+      position: relative;
+      font-family: var(--body);
+      color: var(--ink);
+    }
+    .sidebar {
+      width: 212px;
+      flex: 0 0 212px;
+      padding: 22px 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; padding: 0 6px; }
+    .brand-mark {
+      width: 34px; height: 34px; flex: 0 0 auto;
+      display: grid; place-items: center;
+    }
+    .brand-name { font-size: 16px; font-weight: 650; letter-spacing: -0.03em; line-height: 1.1; }
+    .brand-sub { font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.55; margin-top: 2px; }
+    .nav { display: flex; flex-direction: column; gap: 3px; }
+    .nav-item {
+      display: flex; align-items: center; gap: 9px;
+      padding: 8px 10px; font-size: 12.5px;
+      border-radius: 10px; color: var(--muted);
+      transition: background 0.15s, color 0.15s;
+    }
+    .nav-item.active { color: var(--ink); font-weight: 650; }
+    .nav-item .chev { margin-left: auto; opacity: 0.45; font-size: 13px; line-height: 1; }
+    .nav-sub { margin: 1px 0 3px 28px; display: flex; flex-direction: column; gap: 1px; }
+    .nav-sub span { font-size: 11.5px; padding: 4px 8px; color: var(--muted); border-radius: 7px; }
+    .nav-sub span.active { color: var(--accent); font-weight: 650; background: var(--accent-soft); }
+    .sidebar-foot { margin-top: auto; display: flex; flex-direction: column; gap: 7px; }
+    .streak {
+      display: flex; align-items: center; gap: 7px;
+      font-size: 10.5px; padding: 9px 10px;
+      border-radius: 12px; border: 1px dashed var(--line); color: var(--muted);
+    }
+    .theme {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      font-size: 10.5px; padding: 8px 10px; color: var(--muted);
+    }
+    .theme .label { display: flex; align-items: center; gap: 6px; }
+    .toggle {
+      width: 30px; height: 18px; border-radius: 999px;
+      background: var(--line); position: relative; flex: 0 0 auto;
+    }
+    .toggle::after {
+      content: ""; position: absolute; top: 2px; left: 2px;
+      width: 14px; height: 14px; border-radius: 50%;
+      background: var(--paper); box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+
+    .main {
+      flex: 1; min-width: 0;
+      padding: 22px 26px 22px 6px;
+      display: flex; flex-direction: column; gap: 11px;
+    }
+    .topbar { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 0 2px; }
+    .eyebrow {
+      margin: 0 0 5px; font-size: 9.5px; letter-spacing: 0.13em;
+      text-transform: uppercase; color: var(--muted);
+    }
+    h1 {
+      margin: 0; font-size: 26px; line-height: 1.15;
+      letter-spacing: -0.035em; font-weight: 650;
+    }
+    .greeting-line { display: flex; align-items: center; gap: 8px; }
+    .greeting-spark {
+      width: 24px; height: 24px; flex: 0 0 auto;
+      display: grid; place-items: center; border-radius: 50%;
+      background: var(--accent-soft); color: var(--accent);
+      transform: rotate(-8deg);
+    }
+    .top-actions { display: flex; gap: 7px; flex: 0 0 auto; padding-top: 2px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 11px; border-radius: 10px;
+      font-size: 10.5px; border: 1px solid var(--line);
+      background: var(--paper); color: var(--ink);
+      white-space: nowrap;
+    }
+    .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    .completeness {
+      display: flex; align-items: center; gap: 9px;
+      padding: 7px 11px; border: 1px dashed var(--line); border-radius: 11px;
+      font-size: 10px; color: var(--muted);
+      background: var(--paper);
+    }
+    .dots { display: flex; gap: 5px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; border: 1px solid var(--line); }
+    .dot.on { background: var(--accent); border-color: var(--accent); }
+    .completeness .count { margin-left: auto; font-family: var(--mono); font-size: 10px; color: var(--ink); }
+
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+    .card {
+      position: relative; padding: 12px 13px 11px;
+      min-height: 143px; display: flex; flex-direction: column; gap: 7px;
+    }
+    .card-head { display: flex; align-items: center; gap: 7px; }
+    .card-icon {
+      width: 24px; height: 24px; flex: 0 0 auto;
+      display: grid; place-items: center;
+      background: var(--accent-soft); color: var(--accent);
+    }
+    .card-label { font-size: 11.5px; font-weight: 650; letter-spacing: 0.01em; }
+    .card-badge {
+      margin-left: auto; font-size: 9px; padding: 3px 7px;
+      border-radius: 999px; background: var(--accent-soft); color: var(--accent);
+      white-space: nowrap;
+    }
+    .card-main {
+      font-family: var(--mono); font-size: 24px; line-height: 1;
+      letter-spacing: -0.045em; font-weight: 600;
+    }
+    .card-main .unit { font-size: 10.5px; font-weight: 500; letter-spacing: 0; color: var(--muted); margin-left: 3px; }
+    .card-sub { margin: 0; font-size: 10.5px; line-height: 1.45; color: var(--muted); }
+    .bar {
+      margin-top: auto; height: 5px; border-radius: 999px;
+      background: var(--line); overflow: hidden;
+    }
+    .bar > i { display: block; height: 100%; border-radius: inherit; background: var(--accent); }
+    .metric-row { display: flex; flex-wrap: wrap; gap: 5px; margin-top: auto; }
+    .pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 6px; border-radius: 999px;
+      background: var(--accent-soft); color: var(--muted); font-size: 9.5px;
+    }
+    .chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: auto; }
+    .chip {
+      font-size: 9.5px; padding: 3px 7px; border-radius: 999px;
+      border: 1px solid var(--line); color: var(--muted);
+    }
+    .chip.done { background: var(--accent-soft); border-color: transparent; color: var(--accent); }
+    .mini-bars { display: flex; align-items: flex-end; gap: 3px; height: 22px; margin-top: auto; }
+    .mini-bars i { flex: 1; border-radius: 3px 3px 0 0; background: var(--accent); opacity: 0.72; min-height: 4px; }
+    .schedule-list { margin-top: auto; display: flex; flex-direction: column; gap: 3px; }
+    .schedule-line { display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--muted); }
+    .schedule-line .time { font-family: var(--mono); color: var(--ink); }
+
+    .bottom { display: grid; grid-template-columns: 1.5fr 1fr; gap: 10px; flex: 1; min-height: 0; }
+    .panel { padding: 13px 14px; display: flex; flex-direction: column; gap: 8px; min-height: 0; }
+    .panel-head { display: flex; align-items: center; gap: 7px; }
+    .panel-title { font-size: 11.5px; font-weight: 650; letter-spacing: 0.01em; }
+    .panel-head .more { margin-left: auto; font-size: 9.5px; color: var(--muted); }
+    .timeline-list { display: flex; flex-direction: column; }
+    .timeline-item { display: flex; gap: 9px; position: relative; padding: 5px 0; }
+    .timeline-item:not(:last-child)::after {
+      content: ""; position: absolute; left: 48px; top: 20px; bottom: -5px;
+      width: 1px; background: var(--line);
+    }
+    .timeline-time {
+      width: 36px; flex: 0 0 36px; padding-top: 3px;
+      font-family: var(--mono); font-size: 9.5px; color: var(--muted);
+    }
+    .timeline-dot {
+      width: 7px; height: 7px; flex: 0 0 7px; border-radius: 50%;
+      margin-top: 5px; background: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+    .timeline-dot.shop { background: var(--butter); }
+    .timeline-dot.health { background: var(--sage); }
+    .timeline-dot.sleep { background: var(--blush); }
+    .timeline-dot.habit { background: var(--butter); }
+    .timeline-text { font-size: 10.5px; line-height: 1.35; color: var(--ink); }
+    .timeline-text span { color: var(--muted); }
+    .quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .quick-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px; border-radius: 9px; border: 1px solid var(--line);
+      font-size: 9.5px; color: var(--muted); background: var(--paper);
+    }
+    .quick-btn svg { flex: 0 0 auto; color: var(--accent); }
+    .quick-note {
+      margin-top: auto; padding-top: 8px; border-top: 1px dashed var(--line);
+      font-size: 9.5px; line-height: 1.45; color: var(--muted);
+    }
+    .week-rhythm {
+      margin-top: auto; padding-top: 9px; border-top: 1px dashed var(--line);
+      display: flex; flex-direction: column; gap: 5px;
+    }
+    .week-rhythm-head { display: flex; justify-content: space-between; font-size: 9.5px; color: var(--muted); }
+    .week-bars { display: flex; align-items: flex-end; gap: 4px; height: 38px; }
+    .week-bars i {
+      flex: 1; background: var(--accent); opacity: 0.28;
+      border-radius: 3px 3px 1px 1px; min-height: 4px;
+    }
+    .week-bars i.today { opacity: 0.92; }
+    .week-days { display: flex; justify-content: space-between; font-size: 8.5px; color: var(--muted); }
+    .quick-status {
+      padding: 9px 10px; border: 1px dashed var(--line); border-radius: 11px;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .quick-status-head { display: flex; justify-content: space-between; font-size: 9.5px; color: var(--muted); }
+    .quick-status .chips { margin-top: 0; }
+    .quick-status-note { margin: 0; font-size: 9px; line-height: 1.4; color: var(--muted); }
+    .week-streak { display: flex; align-items: center; gap: 7px; font-size: 9.5px; color: var(--muted); }
+    .streak-days { display: flex; gap: 4px; margin-left: auto; }
+    .streak-days i { width: 6px; height: 6px; border-radius: 50%; background: var(--line); }
+    .streak-days i.on { background: var(--accent); }
+
+    /* ── A · 奶油手账 ─────────────────────────────────────── */
+    .v-cream {
+      --bg: #F6EFE3; --paper: #FFFBF3; --ink: #2B241C; --muted: #7A6A57;
+      --line: #E4D5C0; --accent: #B85C38; --accent-soft: #F3D8C6;
+      --sage: #7E9271; --blush: #D98E73; --butter: #EFD7A4;
+      background-color: var(--bg);
+      background-image: radial-gradient(rgba(80,60,40,0.055) 1px, transparent 1px);
+      background-size: 16px 16px;
+    }
+    .v-cream .sidebar { background: #F1E6D6; border-right: 1px solid var(--line); }
+    .v-cream .brand-mark {
+      background: var(--accent); color: #FFF8EF;
+      border-radius: 50% 44% 54% 46%; transform: rotate(-3deg);
+    }
+    .v-cream .brand-name,
+    .v-cream h1,
+    .v-cream .panel-title { font-family: var(--display); }
+    .v-cream h1 { font-weight: 600; font-size: 27px; }
+    .v-cream .nav-item.active {
+      background: var(--paper); border: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(80,60,40,0.05);
+    }
+    .v-cream .nav-item.active::after {
+      content: ""; width: 5px; height: 5px; border-radius: 50%;
+      background: var(--accent); margin-left: auto;
+    }
+    .v-cream .card {
+      background: var(--paper); border: 1px solid var(--line);
+      border-radius: 18px 13px 20px 12px;
+      box-shadow: 0 2px 0 rgba(80,60,40,0.035);
+    }
+    .v-cream .card::before {
+      content: ""; position: absolute; top: 0; left: 20px;
+      width: 44px; height: 5px; border-radius: 0 0 4px 4px;
+      background: var(--butter); transform: rotate(-1.5deg);
+    }
+    .v-cream .card:nth-child(2n)::before {
+      left: auto; right: 24px; background: var(--sage);
+      transform: rotate(2deg); opacity: 0.55;
+    }
+    .v-cream .card:nth-child(3n)::before {
+      background: var(--accent); opacity: 0.24; transform: rotate(-1deg);
+    }
+    .v-cream .card-icon { border-radius: 9px 11px 8px 12px; }
+    .v-cream .card-badge { background: var(--accent-soft); }
+    .v-cream .panel {
+      background: var(--paper); border: 1px solid var(--line);
+      border-radius: 16px 12px 18px 13px;
+    }
+    .v-cream .quick-btn { background: #FFF8EE; }
+    .v-cream .toggle { background: var(--sage); }
+
+    /* A · 深色 */
+    .v-cream.v-dark {
+      --bg: #1C1815; --paper: #28231F; --ink: #F5EDE2; --muted: #BDAC9A;
+      --line: #3A312A; --accent: #E08A62; --accent-soft: #4A342A;
+      --sage: #9BB08C; --blush: #D89A86; --butter: #D8B56E;
+      background-color: var(--bg);
+      background-image: radial-gradient(rgba(255,240,220,0.045) 1px, transparent 1px);
+    }
+    .v-cream.v-dark .sidebar { background: #231E1A; }
+    .v-cream.v-dark .nav-item.active { background: #302924; }
+    .v-cream.v-dark .quick-btn { background: #2E2823; }
+    .v-cream.v-dark .card { box-shadow: 0 2px 0 rgba(0,0,0,0.22); }
+    .v-cream.v-dark .btn.primary { color: #211B17; }
+    .v-cream.v-dark .toggle { background: var(--accent); }
+    .v-cream.v-dark .toggle::after { left: 14px; }
+
+    /* ── B · 森系小屋 ─────────────────────────────────────── */
+    .v-garden {
+      --bg: #EDF1E4; --paper: #FBFBF2; --ink: #243024; --muted: #5F6B57;
+      --line: #D3DDC5; --accent: #5F7A52; --accent-soft: #DCE7CF;
+      --sage: #8FA37E; --blush: #C98F86; --butter: #E7D6A0;
+      --display: "Noto Serif SC", "Songti SC", "STSong", "SimSun", Georgia, serif;
+      background-color: var(--bg);
+      background-image: radial-gradient(rgba(60,90,50,0.05) 1px, transparent 1px);
+      background-size: 22px 22px;
+    }
+    .v-garden .sidebar { background: #E3EAD8; border-right: 1px solid var(--line); }
+    .v-garden .brand-mark {
+      background: var(--accent); color: #F7F9EF;
+      border-radius: 50% 50% 50% 10px;
+    }
+    .v-garden .brand-name,
+    .v-garden h1 { font-family: var(--display); }
+    .v-garden h1 { font-weight: 600; font-size: 25px; }
+    .v-garden .nav-item.active {
+      background: var(--accent); color: #F7F9EF; border-radius: 999px;
+    }
+    .v-garden .nav-item.active::after {
+      content: ""; width: 5px; height: 5px; border-radius: 50%;
+      background: #F7F9EF; margin-left: auto;
+    }
+    .v-garden .card {
+      background: var(--paper); border: 1px solid var(--line);
+      border-radius: 20px; box-shadow: 0 8px 20px rgba(60,80,50,0.06);
+    }
+    .v-garden .card::after {
+      content: ""; position: absolute; top: 13px; right: 14px;
+      width: 10px; height: 10px; border-radius: 0 70% 0 70%;
+      background: var(--accent-soft); transform: rotate(-18deg);
+    }
+    .v-garden .card-icon { border-radius: 50%; }
+    .v-garden .card-badge { background: var(--accent-soft); }
+    .v-garden .panel {
+      background: var(--paper); border: 1px solid var(--line);
+      border-radius: 18px; box-shadow: 0 8px 20px rgba(60,80,50,0.05);
+    }
+    .v-garden .quick-btn { border-radius: 999px; background: #F7F8EF; }
+    .v-garden .toggle { background: var(--accent); }
+
+    /* ── C · 糖果贴纸 ─────────────────────────────────────── */
+    .v-sticker {
+      --bg: #FBF3E6; --paper: #FFFFFF; --ink: #2E2A2F; --muted: #6F6674;
+      --line: #EADCCB; --accent: #E76F51; --accent-soft: #F9D6C8;
+      --sage: #7FB88F; --blush: #E98A9A; --butter: #E9B949;
+      --lilac: #9B7EBD; --sky: #6FA8C9;
+      --display: "Trebuchet MS", "Avenir Next", "PingFang SC", sans-serif;
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(circle at 18% 24%, rgba(231,111,81,0.12) 0 3px, transparent 4px),
+        radial-gradient(circle at 82% 18%, rgba(127,184,143,0.12) 0 3px, transparent 4px),
+        radial-gradient(circle at 64% 72%, rgba(155,126,189,0.11) 0 3px, transparent 4px),
+        radial-gradient(circle at 32% 86%, rgba(233,185,73,0.12) 0 3px, transparent 4px),
+        radial-gradient(rgba(120,90,60,0.04) 1px, transparent 1px);
+      background-size: 150px 150px, 190px 190px, 210px 210px, 170px 170px, 18px 18px;
+    }
+    .v-sticker .sidebar { background: #FFF9EC; border-right: 1px solid var(--line); }
+    .v-sticker .brand-mark {
+      background: var(--accent); color: #fff; border-radius: 12px;
+      transform: rotate(-5deg); box-shadow: 2px 2px 0 var(--ink);
+    }
+    .v-sticker .brand-name { font-family: var(--display); font-weight: 700; }
+    .v-sticker h1 { font-family: var(--display); font-weight: 700; font-size: 25px; }
+    .v-sticker .nav-item.active {
+      background: var(--butter); border: 1.5px solid var(--ink);
+      border-radius: 10px; box-shadow: 3px 3px 0 var(--ink);
+      transform: rotate(-1deg); color: var(--ink);
+    }
+    .v-sticker .card {
+      border: 1.5px solid var(--ink); border-radius: 16px;
+      box-shadow: 4px 4px 0 var(--butter);
+    }
+    .v-sticker .card:nth-child(1) { background: #FFF1E6; }
+    .v-sticker .card:nth-child(2) {
+      background: #EDF7EC; box-shadow: 4px 4px 0 var(--sage); transform: rotate(0.4deg);
+    }
+    .v-sticker .card:nth-child(3) {
+      background: #F5EDFA; box-shadow: 4px 4px 0 var(--blush); transform: rotate(-0.3deg);
+    }
+    .v-sticker .card:nth-child(4) { background: #FFF7DD; box-shadow: 4px 4px 0 var(--sky); }
+    .v-sticker .card:nth-child(5) {
+      background: #EAF3FB; box-shadow: 4px 4px 0 var(--lilac); transform: rotate(0.5deg);
+    }
+    .v-sticker .card:nth-child(6) {
+      background: #FDEFF1; box-shadow: 4px 4px 0 var(--sage); transform: rotate(-0.4deg);
+    }
+    .v-sticker .card-icon { border-radius: 8px; border: 1px solid var(--ink); }
+    .v-sticker .card:nth-child(1) .card-icon { background: #F9D6C8; color: #A34833; }
+    .v-sticker .card:nth-child(2) .card-icon { background: #D9F0DC; color: #3F7A50; }
+    .v-sticker .card:nth-child(3) .card-icon { background: #EADCF7; color: #6B4E8A; }
+    .v-sticker .card:nth-child(4) .card-icon { background: #FBEBC0; color: #8A6A16; }
+    .v-sticker .card:nth-child(5) .card-icon { background: #D8EAF6; color: #3B6E8A; }
+    .v-sticker .card:nth-child(6) .card-icon { background: #F8D9DE; color: #A44E5E; }
+    .v-sticker .card-badge { border: 1px solid var(--ink); color: var(--ink); background: #fff; }
+    .v-sticker .card:nth-child(1) .card-badge { background: #F9D6C8; color: #A34833; }
+    .v-sticker .card:nth-child(2) .card-badge { background: #D9F0DC; color: #3F7A50; }
+    .v-sticker .card:nth-child(3) .card-badge { background: #EADCF7; color: #6B4E8A; }
+    .v-sticker .card:nth-child(4) .card-badge { background: #FBEBC0; color: #8A6A16; }
+    .v-sticker .card:nth-child(5) .card-badge { background: #D8EAF6; color: #3B6E8A; }
+    .v-sticker .card:nth-child(6) .card-badge { background: #F8D9DE; color: #A44E5E; }
+    .v-sticker .panel {
+      background: #FFFDF8; border: 1.5px solid var(--ink);
+      border-radius: 16px; box-shadow: 4px 4px 0 var(--butter);
+    }
+    .v-sticker .quick-btn {
+      border: 1px solid var(--ink); border-radius: 10px;
+      box-shadow: 2px 2px 0 var(--line);
+    }
+    .v-sticker .quick-btn:nth-child(1) { background: #FFF1E6; }
+    .v-sticker .quick-btn:nth-child(2) { background: #EDF7EC; }
+    .v-sticker .quick-btn:nth-child(3) { background: #F5EDFA; }
+    .v-sticker .quick-btn:nth-child(4) { background: #FFF7DD; }
+    .v-sticker .quick-btn:nth-child(5) { background: #EAF3FB; }
+    .v-sticker .quick-btn:nth-child(6) { background: #FDEFF1; }
+    .v-sticker .timeline-dot { border-radius: 3px; transform: rotate(45deg); }
+    .v-sticker .week-bars i:nth-child(1) { background: var(--accent); opacity: 0.72; }
+    .v-sticker .week-bars i:nth-child(2) { background: var(--sage); opacity: 0.72; }
+    .v-sticker .week-bars i:nth-child(3) { background: var(--lilac); opacity: 0.72; }
+    .v-sticker .week-bars i:nth-child(4) { background: var(--butter); opacity: 0.72; }
+    .v-sticker .week-bars i:nth-child(5) { background: var(--sky); opacity: 0.72; }
+    .v-sticker .week-bars i:nth-child(6) { background: var(--blush); opacity: 0.72; }
+    .v-sticker .week-bars i:nth-child(7) { background: var(--accent); opacity: 0.92; }
+    .v-sticker .dots .dot.on:nth-child(1) { background: var(--accent); border-color: var(--accent); }
+    .v-sticker .dots .dot.on:nth-child(2) { background: var(--sage); border-color: var(--sage); }
+    .v-sticker .dots .dot.on:nth-child(3) { background: var(--lilac); border-color: var(--lilac); }
+    .v-sticker .dots .dot.on:nth-child(4) { background: var(--butter); border-color: var(--butter); }
+    .v-sticker .dots .dot.on:nth-child(5) { background: var(--sky); border-color: var(--sky); }
+    .v-sticker .toggle { background: var(--lilac); }
+
+    /* ── C1 · 果冻贴纸 ────────────────────────────────────── */
+    .v-jelly {
+      --bg: #FBF3EA; --paper: #FFFFFF; --ink: #3A2E2A; --muted: #7C6A63;
+      --line: #F0E1D6; --accent: #E98A72; --accent-soft: #FBE0D7;
+      --sage: #A8D5BA; --blush: #F2A68C; --butter: #F4D58D;
+      --lilac: #C4B0DD; --sky: #A9CCE3;
+      --display: "Trebuchet MS", "Avenir Next", "PingFang SC", sans-serif;
+      background-color: var(--bg);
+      background-image: radial-gradient(rgba(180,120,100,0.05) 1px, transparent 1px);
+      background-size: 18px 18px;
+    }
+    .v-jelly .sidebar { background: #FFF9F3; border-right: 1px solid var(--line); }
+    .v-jelly .brand-mark {
+      background: var(--blush); color: #fff; border-radius: 14px;
+      box-shadow: 0 6px 14px rgba(233,138,114,0.25);
+    }
+    .v-jelly .brand-name { font-family: var(--display); font-weight: 700; }
+    .v-jelly h1 { font-family: var(--display); font-weight: 700; }
+    .v-jelly .nav-item.active {
+      background: var(--accent-soft); border: none; border-radius: 14px;
+      color: var(--accent); box-shadow: 0 4px 10px rgba(233,138,114,0.15);
+    }
+    .v-jelly .card {
+      background: var(--paper); border: 1px solid rgba(240,225,214,0.85);
+      border-radius: 22px; box-shadow: 0 10px 24px rgba(180,120,100,0.10);
+    }
+    .v-jelly .card:nth-child(2) { box-shadow: 0 10px 24px rgba(168,213,186,0.22); }
+    .v-jelly .card:nth-child(3) { box-shadow: 0 10px 24px rgba(196,176,221,0.22); }
+    .v-jelly .card:nth-child(4) { box-shadow: 0 10px 24px rgba(169,204,227,0.20); }
+    .v-jelly .card:nth-child(5) { box-shadow: 0 10px 24px rgba(244,213,141,0.24); }
+    .v-jelly .card::after {
+      content: ""; position: absolute; top: 13px; right: 15px;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--butter); opacity: 0.8;
+    }
+    .v-jelly .card-icon { border-radius: 12px; background: var(--accent-soft); }
+    .v-jelly .card-badge { background: var(--accent-soft); color: var(--accent); }
+    .v-jelly .panel {
+      background: var(--paper); border: 1px solid var(--line);
+      border-radius: 22px; box-shadow: 0 10px 24px rgba(180,120,100,0.08);
+    }
+    .v-jelly .quick-btn { border: none; background: #FFF6EF; border-radius: 12px; }
+    .v-jelly .greeting-spark { background: var(--butter); color: #7A5B2A; }
+    .v-jelly .toggle { background: var(--sage); }
+
+    /* ── C2 · 手绘贴纸 ────────────────────────────────────── */
+    .v-doodle {
+      --bg: #FAF4E8; --paper: #FFFDF7; --ink: #2F2A26; --muted: #756A5F;
+      --line: #E6D9C6; --accent: #D96C4F; --accent-soft: #F7DCCF;
+      --sage: #8FBF9F; --blush: #E8A0A8; --butter: #E9C46A;
+      --display: "Segoe Print", "Bradley Hand", "Trebuchet MS", "PingFang SC", cursive;
+      background-color: var(--bg);
+      background-image: radial-gradient(rgba(80,60,40,0.11) 1px, transparent 1px);
+      background-size: 14px 14px;
+    }
+    .v-doodle .sidebar { background: #F6EDDC; border-right: 2px dashed var(--line); }
+    .v-doodle .brand-mark {
+      background: var(--accent); color: #fff;
+      border-radius: 50% 45% 55% 48%; transform: rotate(-6deg);
+    }
+    .v-doodle .brand-name { font-family: var(--display); font-weight: 700; }
+    .v-doodle h1 {
+      font-family: var(--display); font-weight: 700;
+      text-decoration: underline wavy var(--accent) 1.5px;
+      text-underline-offset: 5px;
+    }
+    .v-doodle .nav-item.active {
+      background: transparent; border-bottom: 2px dashed var(--accent);
+      border-radius: 0; color: var(--accent); box-shadow: none;
+    }
+    .v-doodle .card {
+      background: var(--paper); border: 2px dashed var(--ink);
+      border-radius: 18px 24px 16px 22px;
+      box-shadow: 3px 4px 0 rgba(47,42,38,0.12);
+      transform: rotate(-0.35deg);
+    }
+    .v-doodle .card:nth-child(2n) {
+      transform: rotate(0.4deg); border-radius: 24px 16px 22px 18px;
+    }
+    .v-doodle .card:nth-child(3n) { transform: rotate(-0.2deg); }
+    .v-doodle .card::before {
+      content: ""; position: absolute; top: -6px; left: 22px;
+      width: 52px; height: 12px; background: rgba(233,196,106,0.55);
+      transform: rotate(-2deg);
+    }
+    .v-doodle .card::after {
+      content: ""; position: absolute; top: 12px; right: 14px;
+      width: 9px; height: 9px; border: 1.5px solid var(--ink);
+      border-radius: 50%; background: transparent;
+    }
+    .v-doodle .card-icon {
+      border: 1.5px solid var(--ink); border-radius: 50%; background: transparent;
+    }
+    .v-doodle .card-badge {
+      background: #fff; border: 1.5px solid var(--ink);
+      color: var(--ink); border-radius: 999px;
+    }
+    .v-doodle .panel {
+      background: var(--paper); border: 2px dashed var(--ink);
+      border-radius: 20px 26px 18px 24px;
+      box-shadow: 3px 4px 0 rgba(47,42,38,0.10);
+    }
+    .v-doodle .quick-btn {
+      border: 1.5px dashed var(--ink); border-radius: 12px; background: #fff;
+    }
+    .v-doodle .timeline-dot { border: 1.5px solid var(--ink); }
+    .v-doodle .greeting-spark {
+      background: transparent; border: 1.5px dashed var(--ink);
+      border-radius: 50%;
+    }
+    .v-doodle .toggle { background: var(--butter); }
+
+    /* ── C3 · 复古糖果 ────────────────────────────────────── */
+    .v-retro {
+      --bg: #F6EBD9; --paper: #FFF9ED; --ink: #3B2E28; --muted: #7A6458;
+      --line: #E2CDB4; --accent: #E76F51; --accent-soft: #F7D9CC;
+      --sage: #7A9E7E; --blush: #E8A0A8; --butter: #F2C14E;
+      --display: "Cooper Black", "Trebuchet MS", Georgia, "PingFang SC", serif;
+      background-color: var(--bg);
+      background-image: radial-gradient(rgba(120,80,40,0.06) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+    .v-retro .sidebar { background: #F0DFC8; border-right: 2px solid var(--ink); }
+    .v-retro .brand-mark {
+      background: var(--accent); color: #FFF9ED; border: 2px solid var(--ink);
+      border-radius: 10px; box-shadow: 3px 3px 0 var(--ink); transform: rotate(-3deg);
+    }
+    .v-retro .brand-name { font-family: var(--display); font-weight: 700; }
+    .v-retro h1 { font-family: var(--display); font-weight: 700; letter-spacing: -0.02em; }
+    .v-retro .nav-item.active {
+      background: var(--butter); border: 2px solid var(--ink);
+      border-radius: 8px; box-shadow: 3px 3px 0 var(--ink);
+      transform: rotate(-0.6deg); color: var(--ink);
+    }
+    .v-retro .card {
+      background: var(--paper); border: 2px solid var(--ink);
+      border-radius: 14px; box-shadow: 5px 5px 0 var(--ink);
+    }
+    .v-retro .card:nth-child(2) { box-shadow: 5px 5px 0 var(--sage); }
+    .v-retro .card:nth-child(3) { box-shadow: 5px 5px 0 var(--butter); }
+    .v-retro .card:nth-child(4) { box-shadow: 5px 5px 0 var(--accent); }
+    .v-retro .card:nth-child(5) { box-shadow: 5px 5px 0 var(--blush); }
+    .v-retro .card:nth-child(6) { box-shadow: 5px 5px 0 var(--sage); }
+    .v-retro .card-icon {
+      border: 1.5px solid var(--ink); border-radius: 8px; background: var(--butter);
+    }
+    .v-retro .card-badge {
+      background: var(--butter); border: 1.5px solid var(--ink); color: var(--ink);
+    }
+    .v-retro .panel {
+      background: var(--paper); border: 2px solid var(--ink);
+      border-radius: 14px; box-shadow: 5px 5px 0 var(--ink);
+    }
+    .v-retro .quick-btn {
+      border: 1.5px solid var(--ink); border-radius: 8px;
+      box-shadow: 2px 2px 0 var(--ink); background: #FFF9ED;
+    }
+    .v-retro .greeting-spark {
+      background: var(--butter); border: 1.5px solid var(--ink);
+      border-radius: 50%; box-shadow: 2px 2px 0 var(--ink);
+    }
+    .v-retro .toggle { background: var(--sage); }
+    .v-retro .screen-strip {
+      position: absolute; top: 0; left: 0; right: 0; height: 7px;
+      background: repeating-linear-gradient(
+        90deg,
+        var(--accent) 0 18px,
+        var(--butter) 18px 36px,
+        var(--sage) 36px 54px
+      );
+    }
+
+    /* 画布上的说明便签稍微收一点 */
+    .dc-postit { line-height: 1.55 !important; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <script type="text/babel" src="design-canvas.jsx"></script>
+
+  <script type="text/babel">
+    const { DesignCanvas, DCSection, DCArtboard } = window;
+
+    const iconPaths = {
+      grid: (
+        <>
+          <rect x="3" y="3" width="7" height="7" rx="1.6" />
+          <rect x="14" y="3" width="7" height="7" rx="1.6" />
+          <rect x="3" y="14" width="7" height="7" rx="1.6" />
+          <rect x="14" y="14" width="7" height="7" rx="1.6" />
+        </>
+      ),
+      book: (
+        <>
+          <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5V5.5Z" />
+          <path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H20" />
+        </>
+      ),
+      bag: (
+        <>
+          <path d="M6 8h12l-1 12H7L6 8Z" />
+          <path d="M9 8V6a3 3 0 0 1 6 0v2" />
+        </>
+      ),
+      heart: <path d="M12 20s-7-4.35-7-9.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 7 3.5C19 15.65 12 20 12 20Z" />,
+      refresh: (
+        <>
+          <path d="M20 12a8 8 0 1 1-2.34-5.66" />
+          <path d="M20 4v5h-5" />
+        </>
+      ),
+      sun: (
+        <>
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4" />
+        </>
+      ),
+      moon: <path d="M20 15.5A8.5 8.5 0 0 1 8.5 4 7 7 0 1 0 20 15.5Z" />,
+      plus: <path d="M12 5v14M5 12h14" />,
+      check: <path d="M5 12l4 4L19 6" />,
+      flame: <path d="M12 22c4 0 7-2.7 7-6.5 0-3-1.8-5.2-3.6-7.1C13.8 6.5 12 4.5 12 2c0 3.5-2.4 5.2-4 7.2C6.4 11.1 5 13 5 15.5 5 19.3 8 22 12 22Z" />,
+      leaf: (
+        <>
+          <path d="M20 4C12 4 5 8 5 15c0 3 2 5 5 5 7 0 10-7 10-16Z" />
+          <path d="M4 21c3-6 7-9 12-11" />
+        </>
+      ),
+      drop: <path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11Z" />,
+      wallet: (
+        <>
+          <rect x="3" y="6" width="18" height="13" rx="2" />
+          <path d="M3 9h18" />
+          <circle cx="16.5" cy="13.5" r="1" />
+        </>
+      ),
+      calendar: (
+        <>
+          <rect x="3" y="5" width="18" height="16" rx="2" />
+          <path d="M8 3v4M16 3v4M3 10h18" />
+        </>
+      ),
+      sparkle: <path d="M12 3l1.4 5.6L19 10l-5.6 1.4L12 17l-1.4-5.6L5 10l5.6-1.4L12 3Z" />,
+      search: (
+        <>
+          <circle cx="11" cy="11" r="7" />
+          <path d="M20 20l-4-4" />
+        </>
+      ),
+      clock: (
+        <>
+          <circle cx="12" cy="12" r="9" />
+          <path d="M12 7v5l3 2" />
+        </>
+      ),
+    };
+
+    function Icon({ name, size = 18, strokeWidth = 1.7 }) {
+      return (
+        <svg
+          width={size}
+          height={size}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={strokeWidth}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          {iconPaths[name]}
+        </svg>
+      );
+    }
+
+    const NAV = [
+      { label: "总览", icon: "grid", active: true },
+      { label: "学习", icon: "book" },
+      { label: "生活", icon: "bag", expanded: true },
+      { label: "健康", icon: "heart" },
+      { label: "复盘", icon: "refresh" },
+    ];
+
+    const SUB_NAV = ["待买", "资金项目", "财务", "习惯", "日程"];
+
+    const TIMELINE = [
+      { time: "07:30", title: "早起打卡", detail: "今日第 1 项", tone: "habit" },
+      { time: "08:00", title: "学习打卡", detail: "算法 · 45 分钟", tone: "study" },
+      { time: "12:30", title: "待买已买", detail: "牛奶 · ¥25", tone: "shop" },
+      { time: "18:30", title: "运动", detail: "跑步 · 30 分钟", tone: "health" },
+      { time: "20:30", title: "待买加入", detail: "机械键盘", tone: "shop" },
+      { time: "22:30", title: "健康记录", detail: "睡眠 7.2h · 心情 4", tone: "sleep" },
+    ];
+
+    const QUICK = [
+      { icon: "book", label: "学习任务" },
+      { icon: "bag", label: "加待买" },
+      { icon: "heart", label: "健康记录" },
+      { icon: "wallet", label: "记一笔支出" },
+      { icon: "check", label: "打卡习惯" },
+      { icon: "calendar", label: "加日程" },
+    ];
+
+    function Overview({ variant = "v-cream", dark = false }) {
+      return (
+        <div className={`screen ${variant} ${dark ? "v-dark" : ""}`}>
+          {variant === "v-retro" ? <span className="screen-strip"></span> : null}
+          <aside className="sidebar">
+            <div className="brand">
+              <span className="brand-mark"><Icon name="sparkle" size={17} /></span>
+              <div>
+                <div className="brand-name">小生活</div>
+                <div className="brand-sub">Life Board</div>
+              </div>
+            </div>
+
+            <nav className="nav">
+              {NAV.map((item) => (
+                <React.Fragment key={item.label}>
+                  <div className={`nav-item ${item.active ? "active" : ""}`}>
+                    <Icon name={item.icon} size={15} />
+                    <span>{item.label}</span>
+                    {item.expanded ? <span className="chev">⌄</span> : null}
+                  </div>
+                  {item.expanded ? (
+                    <div className="nav-sub">
+                      {SUB_NAV.map((sub) => (
+                        <span key={sub} className={sub === "待买" ? "active" : ""}>{sub}</span>
+                      ))}
+                    </div>
+                  ) : null}
+                </React.Fragment>
+              ))}
+            </nav>
+
+            <div className="sidebar-foot">
+              <div className="streak">
+                <Icon name="flame" size={13} /> 连续记录 12 天
+              </div>
+              <div className="theme">
+                <span className="label">
+                  <Icon name={dark ? "sun" : "moon"} size={12} />
+                  {dark ? "浅色模式" : "深色模式"}
+                </span>
+                <span className="toggle"></span>
+              </div>
+            </div>
+          </aside>
+
+          <main className="main">
+            <header className="topbar">
+              <div>
+                <p className="eyebrow">2026 年 11 月 9 日 · 星期日</p>
+                <div className="greeting-line">
+                  <h1>下午好，今天也慢慢来。</h1>
+                  <span className="greeting-spark"><Icon name="sun" size={14} /></span>
+                </div>
+              </div>
+              <div className="top-actions">
+                <span className="btn"><Icon name="search" size={13} /> 搜索</span>
+                <span className="btn primary"><Icon name="plus" size={13} /> 快速记录</span>
+              </div>
+            </header>
+
+            <div className="completeness">
+              <span>今日完整度</span>
+              <div className="dots">
+                {[1, 1, 1, 1, 1, 0].map((on, index) => (
+                  <span key={index} className={`dot ${on ? "on" : ""}`}></span>
+                ))}
+              </div>
+              <span className="count">5 / 6</span>
+            </div>
+
+            <section className="grid">
+              <article className="card">
+                <div className="card-head">
+                  <span className="card-icon"><Icon name="book" size={14} /></span>
+                  <span className="card-label">学习</span>
+                  <span className="card-badge">进行中</span>
+                </div>
+                <div className="card-main">3<span className="unit">/ 5</span></div>
+                <p className="card-sub">今日 95 分钟 · 本周 6.5 小时</p>
+                <div className="bar"><i style={{ width: "60%" }}></i></div>
+              </article>
+
+              <article className="card">
+                <div className="card-head">
+                  <span className="card-icon"><Icon name="bag" size={14} /></span>
+                  <span className="card-label">待买</span>
+                  <span className="card-badge">剩余</span>
+                </div>
+                <div className="card-main">¥672<span className="unit">剩余</span></div>
+                <p className="card-sub">预算 ¥1,000 · 已花 ¥328</p>
+                <div className="bar"><i style={{ width: "32.8%" }}></i></div>
+              </article>
+
+              <article className="card">
+                <div className="card-head">
+                  <span className="card-icon"><Icon name="heart" size={14} /></span>
+                  <span className="card-label">健康</span>
+                  <span className="card-badge">不错</span>
+                </div>
+                <div className="card-main">7.2<span className="unit">h</span></div>
+                <p className="card-sub">睡眠 · 运动 30 分钟 · 饮水 1,800ml</p>
+                <div className="metric-row">
+                  <span className="pill"><Icon name="drop" size={10} /> 1,800ml</span>
+                  <span className="pill"><Icon name="heart" size={10} /> 心情 4/5</span>
+                </div>
+              </article>
+
+              <article className="card">
+                <div className="card-head">
+                  <span className="card-icon"><Icon name="wallet" size={14} /></span>
+                  <span className="card-label">财务</span>
+                  <span className="card-badge">本月</span>
+                </div>
+                <div className="card-main">+¥2,300</div>
+                <p className="card-sub">收入 ¥4,000 · 支出 ¥1,700</p>
+                <div className="mini-bars">
+                  <i style={{ height: "38%" }}></i>
+                  <i style={{ height: "64%" }}></i>
+                  <i style={{ height: "48%" }}></i>
+                  <i style={{ height: "82%" }}></i>
+                  <i style={{ height: "58%" }}></i>
+                </div>
+              </article>
+
+              <article className="card">
+                <div className="card-head">
+                  <span className="card-icon"><Icon name="check" size={14} /></span>
+                  <span className="card-label">习惯</span>
+                  <span className="card-badge">连续 12 天</span>
+                </div>
+                <div className="card-main">3<span className="unit">/ 4</span></div>
+                <p className="card-sub">早起 · 阅读 · 运动已完成</p>
+                <div className="chips">
+                  <span className="chip done">早起</span>
+                  <span className="chip done">阅读</span>
+                  <span className="chip done">运动</span>
+                  <span className="chip">喝水</span>
+                </div>
+              </article>
+
+              <article className="card">
+                <div className="card-head">
+                  <span className="card-icon"><Icon name="calendar" size={14} /></span>
+                  <span className="card-label">日程</span>
+                  <span className="card-badge">今天</span>
+                </div>
+                <div className="card-main">2<span className="unit">项</span></div>
+                <p className="card-sub">今天还有 2 项安排</p>
+                <div className="schedule-list">
+                  <div className="schedule-line"><span className="time">15:00</span> 组会</div>
+                  <div className="schedule-line"><span className="time">20:00</span> 健身</div>
+                </div>
+              </article>
+            </section>
+
+            <section className="bottom">
+              <div className="panel">
+                <div className="panel-head">
+                  <span className="panel-title">今日时间线</span>
+                  <span className="more">全部记录 →</span>
+                </div>
+                <div className="timeline-list">
+                  {TIMELINE.map((item) => (
+                    <div className="timeline-item" key={item.time}>
+                      <span className="timeline-time">{item.time}</span>
+                      <span className={`timeline-dot ${item.tone}`}></span>
+                      <div className="timeline-text">
+                        {item.title} <span>· {item.detail}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="week-rhythm">
+                  <div className="week-rhythm-head"><span>本周节奏</span><span>5 天有记录</span></div>
+                  <div className="week-bars">
+                    {[44, 68, 55, 82, 74, 36, 22].map((h, i) => (
+                      <i key={i} className={i === 6 ? "today" : ""} style={{ height: `${h}%` }}></i>
+                    ))}
+                  </div>
+                  <div className="week-days"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+                </div>
+              </div>
+
+              <div className="panel">
+                <div className="panel-head">
+                  <span className="panel-title">快速记录</span>
+                  <span className="more">今天</span>
+                </div>
+                <div className="quick-status">
+                  <div className="quick-status-head"><span>今日已记录</span><span>5 / 6</span></div>
+                  <div className="chips">
+                    <span className="chip done">学习</span>
+                    <span className="chip done">待买</span>
+                    <span className="chip done">健康</span>
+                    <span className="chip done">财务</span>
+                    <span className="chip done">习惯</span>
+                    <span className="chip">日程</span>
+                  </div>
+                  <p className="quick-status-note">再补一条日程，今天就完整了。</p>
+                </div>
+                <div className="quick-grid">
+                  {QUICK.map((item) => (
+                    <span className="quick-btn" key={item.label}>
+                      <Icon name={item.icon} size={12} /> {item.label}
+                    </span>
+                  ))}
+                </div>
+                <div className="week-streak">
+                  <span>连续记录</span>
+                  <span className="streak-days">
+                    {[1, 1, 1, 1, 1, 0, 0].map((on, i) => (
+                      <i key={i} className={on ? "on" : ""}></i>
+                    ))}
+                  </span>
+                  <span>5 天</span>
+                </div>
+                <p className="quick-note">记录不用完美，留下一点痕迹就好。</p>
+              </div>
+            </section>
+          </main>
+        </div>
+      );
+    }
+
+    function App() {
+      return (
+        <DesignCanvas minScale={0.15} maxScale={2}>
+          <DCSection
+            id="overview-light"
+            title="总览页 · 三个温暖方向"
+            subtitle="单人使用 · 桌面 1120×840 · 中文假数据。三个方向共用同一信息结构，只换视觉语言；点击画板标签或展开图标可全屏查看。"
+          >
+            <DCArtboard id="cream" label="A · 奶油手账" width={1120} height={840}>
+              <Overview variant="v-cream" />
+            </DCArtboard>
+            <DCArtboard id="garden" label="B · 森系小屋" width={1120} height={840}>
+              <Overview variant="v-garden" />
+            </DCArtboard>
+            <DCArtboard id="sticker" label="C · 糖果贴纸" width={1120} height={840}>
+              <Overview variant="v-sticker" />
+            </DCArtboard>
+          </DCSection>
+
+          <DCSection
+            id="overview-dark"
+            title="深色模式 · 以 A 方向为例"
+            subtitle="暖色深底，不纯黑；正式实现时三个方向共用一套深色变量。"
+          >
+            <DCArtboard id="cream-dark" label="A · 奶油手账（深色）" width={1120} height={840}>
+              <Overview variant="v-cream" dark />
+            </DCArtboard>
+          </DCSection>
+
+          <DCSection
+            id="c-variants"
+            title="C 方向 · 四种贴纸语言"
+            subtitle="保留原来的糖果贴纸，再往更软、更手绘、更复古三个方向细化；布局不变，只比较视觉语言。"
+          >
+            <DCArtboard id="c-original" label="C0 · 糖果贴纸（原版）" width={1120} height={840}>
+              <Overview variant="v-sticker" />
+            </DCArtboard>
+            <DCArtboard id="c-jelly" label="C1 · 果冻贴纸" width={1120} height={840}>
+              <Overview variant="v-jelly" />
+            </DCArtboard>
+            <DCArtboard id="c-doodle" label="C2 · 手绘贴纸" width={1120} height={840}>
+              <Overview variant="v-doodle" />
+            </DCArtboard>
+            <DCArtboard id="c-retro" label="C3 · 复古糖果" width={1120} height={840}>
+              <Overview variant="v-retro" />
+            </DCArtboard>
+          </DCSection>
+        </DesignCanvas>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>

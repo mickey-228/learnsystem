@@ -1,0 +1,65 @@
+{
+  "type": "design",
+  "designSystems": [],
+  "primaryDesignSystem": null,
+  "assets": {
+    "小生活 · 总览页视觉方向": {
+      "versions": [
+        {
+          "path": "Overview Comparisons.html",
+          "createdAt": "2026-11-09T12:54:58.096Z",
+          "status": "needs-review",
+          "subtitle": "A 奶油手账 / B 森系小屋 / C0-C3 四种贴纸语言 + 深色预览",
+          "viewport": {
+            "width": 1120,
+            "height": 840
+          }
+        }
+      ]
+    },
+    "小生活 · C 方向贴纸变体": {
+      "versions": [
+        {
+          "path": "C Variants.html",
+          "createdAt": "2026-11-09T13:03:11.797Z",
+          "status": "needs-review",
+          "subtitle": "C0 糖果（已加浓配色）/ C1 果冻 / C2 手绘 / C3 复古",
+          "viewport": {
+            "width": 1120,
+            "height": 840
+          }
+        }
+      ]
+    },
+    "小生活 · C0 完整原型": {
+      "versions": [
+        {
+          "path": "C0 Prototype.html",
+          "createdAt": "2026-11-09T13:20:34.877Z",
+          "status": "needs-review",
+          "subtitle": "目标名称可自定义；任务库 + 可自定义番茄钟 + Obsidian",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          }
+        }
+      ]
+    },
+    "小生活 · C0 完整原型（单文件）": {
+      "versions": [
+        {
+          "path": "C0 Prototype (Standalone).html",
+          "createdAt": "2026-11-09T13:20:34.965Z",
+          "status": "needs-review",
+          "subtitle": "单文件交付版，目标名称可自定义",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          }
+        }
+      ]
+    }
+  },
+  "createdAt": "2026-11-09T12:54:58.097Z",
+  "updatedAt": "2026-11-09T13:47:55.862Z"
+}
