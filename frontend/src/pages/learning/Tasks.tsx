@@ -22,9 +22,7 @@ export function TasksPage() {
     <>
       <header className="page-head">
         <div>
-          <p className="eyebrow">任务</p>
           <h1 className="page-title">任务库</h1>
-          <p className="page-sub">按今天 / 本周 / 已完成查看。新任务在「今日」添加。</p>
         </div>
         <div className="top-actions">
           <Link to="/" className="btn primary">

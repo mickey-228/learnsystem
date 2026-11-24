@@ -31,3 +31,9 @@ Thumbs.db
 
 # Tool state
 .commandcode/
+
+# Agent workspace data
+.workbuddy/
+
+# Design explorations (large font copies)
+designs/clean-ui/fonts/

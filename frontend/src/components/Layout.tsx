@@ -38,11 +38,29 @@ const navItems = [
   { to: '/life', label: '生活', icon: 'bag' },
 ]
 
+const weekHeads = ['一', '二', '三', '四', '五', '六', '日']
+
+function buildMonthGrid() {
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = now.getMonth()
+  const today = now.getDate()
+  const start = (new Date(year, month, 1).getDay() + 6) % 7
+  const total = new Date(year, month + 1, 0).getDate()
+  const cells: (number | null)[] = []
+  for (let index = 0; index < 35; index += 1) {
+    const day = index - start + 1
+    cells.push(day >= 1 && day <= total ? day : null)
+  }
+  return { cells, today, label: `${year} 年 ${month + 1} 月` }
+}
+
+const monthGrid = buildMonthGrid()
+
 export function Layout() {
   const [theme, setTheme] = useState<'light' | 'dark'>(() =>
     localStorage.getItem('c0-theme') === 'dark' ? 'dark' : 'light',
   )
-
   useEffect(() => {
     document.documentElement.dataset.theme = theme
     localStorage.setItem('c0-theme', theme)
@@ -55,10 +73,23 @@ export function Layout() {
           <span className="c0-brand-mark">
             <NavIcon name="sparkle" size={17} />
           </span>
-          <div>
-            <div className="c0-brand-name">小生活</div>
-            <div className="c0-brand-sub">Life Board</div>
-          </div>
+          <div className="c0-brand-name">小生活</div>
+        </div>
+
+        <div className="c0-cal" role="group" aria-label={monthGrid.label}>
+          {weekHeads.map((head) => (
+            <span key={head} className="c0-cal-head" aria-hidden="true">
+              {head}
+            </span>
+          ))}
+          {monthGrid.cells.map((day, index) => (
+            <span
+              key={index}
+              className={`c0-cal-day${day === monthGrid.today ? ' today' : ''}`}
+            >
+              {day ?? ''}
+            </span>
+          ))}
         </div>
 
         <nav className="c0-nav">

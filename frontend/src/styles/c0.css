@@ -125,14 +125,6 @@ html[data-theme="dark"] .c0-sidebar {
   line-height: 1.1;
 }
 
-.c0-brand-sub {
-  font-size: 9px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  opacity: 0.55;
-  margin-top: 2px;
-}
-
 .c0-nav {
   display: flex;
   flex-direction: column;

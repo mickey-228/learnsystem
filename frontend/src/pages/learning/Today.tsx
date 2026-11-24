@@ -83,7 +83,6 @@ export function TodayPage() {
     <>
       <header className="page-head">
         <div>
-          <p className="eyebrow">学习 · 今日计划</p>
           <h1 className="page-title">{formatChineseDate(today)}</h1>
         </div>
       </header>

@@ -153,7 +153,6 @@ export function NotesPage() {
     <>
       <header className="page-head">
         <div>
-          <p className="eyebrow">笔记</p>
           <h1 className="page-title">Obsidian 笔记</h1>
           <p className="page-sub">
             学习笔记按标题、路径和标签索引，点击可以在 Obsidian 里打开。

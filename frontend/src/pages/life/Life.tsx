@@ -834,9 +834,7 @@ export function LifePage() {
     <>
       <header className="page-head">
         <div>
-          <p className="eyebrow">生活</p>
           <h1 className="page-title">生活</h1>
-          <p className="page-sub">待买、资金项目、财务、习惯、日程</p>
         </div>
       </header>
 

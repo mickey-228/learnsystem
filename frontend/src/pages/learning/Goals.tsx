@@ -82,7 +82,6 @@ export function GoalsPage() {
     <>
       <header className="page-head">
         <div>
-          <p className="eyebrow">目标</p>
           <h1 className="page-title">你想完成什么</h1>
           <p className="page-sub">
             名称由你自己填写，比如「雅思」「算法」；下面的描述写具体目标。
